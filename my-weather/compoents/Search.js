@@ -22,7 +22,7 @@ const Search = ({ onSearch }) => {
     };
 
     return (
-        <div className="flex items-center justify-center p-4">
+        <div className="flex items-center justify-center p-4 w-4/5 mx-auto"> 
             <AutoComplete
                 style={{ width: 200 }}
                 dataSource={dataSource}
