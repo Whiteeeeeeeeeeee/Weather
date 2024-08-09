@@ -25,9 +25,13 @@ export default function Home() {
     })
   }, [])
 
-  const hanshu = () => {
-    console.log('dayinchulai');
-
+  const search = (city) => {
+    fetchWeatherDataNow(city).then(res => {
+      setweather(res.lives[0])
+    })
+    fetchWeatherData(city).then(res => {
+      setweather2(JSON.stringify(res))
+    })
   }
   return (
     <main
@@ -35,7 +39,7 @@ export default function Home() {
     >
       <div class="flex mx-auto w-3/5 h-3/5 bg-white rounded-lg" >
         <div class='flex  w-1/5 flex-col justify-around'>
-          <Search onSearch={hanshu} />
+          <Search onSearch={search} />
           <div class='w-4/5 mx-auto '>
             <img src='/cloud.jpg'></img>
             <div class='text-2xl'>{weather1.temperature}℃</div>
