@@ -1,4 +1,3 @@
-
 import { Inter } from "next/font/google";
 import Search from '@/compoents/Search';
 import WeatherCard from '@/compoents/WeatherCard';
@@ -6,7 +5,7 @@ import WeatherNow from '@/compoents/WeatherNow';
 import React, { useEffect, useState } from "react";
 import { fetchWeatherData, fetchWeatherDataNow } from '@/services/weather';
 import { Tabs, Layout, Select } from 'antd';
-
+import imge from '@/public/cloud.jpg'
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
@@ -32,6 +31,16 @@ export default function Home() {
       <div class="flex mx-auto w-3/5 h-3/5 bg-white rounded-lg">
         <div class='w-2/5'>
           <Search onSearch={hanshu} />
+          <div>
+            <img src={imge}></img>
+            <div>2</div>
+            <div>3</div>
+          </div>
+          <div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
         </div>
         <div class='w-3/5 bg-slate-50'>
           <Tabs defaultActiveKey="1" >
