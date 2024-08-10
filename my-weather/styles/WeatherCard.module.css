@@ -1,0 +1,47 @@
+.box {
+    width: 30%;
+    height: 150px;
+    background-color: white;
+    font-size: large;
+    color: rgb(194, 201, 207);
+    padding-left: 10px;
+    padding-top: 5px;
+    border-radius: 10%;
+}
+
+.boxMargin{
+    width: 30%;
+    height: 150px;
+    margin-left: 20px;
+    font-size: large;
+    background-color: white;
+    color: rgb(194, 201, 207);
+    padding-left: 10px;
+    padding-top: 5px;
+    border-radius: 10%;
+}
+
+.boxMargin2{
+    width: 30%;
+    height: 150px;
+    margin-top: 20px;
+    background-color: white;
+    color: rgb(194, 201, 207);
+    padding-left: 10px;
+    padding-top: 5px;
+    border-radius: 10%;
+    font-size: large;
+}
+
+.boxMargin3{
+    width: 30%;
+    height: 150px;
+    margin-top: 20px;
+    margin-left: 20px;
+    background-color: white;
+    color: rgb(194, 201, 207);
+    padding-left: 10px;
+    padding-top: 5px;
+    border-radius: 10%;
+    font-size: large;
+}

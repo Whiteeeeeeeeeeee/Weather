@@ -1,117 +1,106 @@
-import Image from "next/image";
 import { Inter } from "next/font/google";
+import Search from '@/compoents/Search';
+import WeatherCard from '@/compoents/WeatherCard';
+import WeatherNow from '@/compoents/WeatherNow';
+import React, { useEffect, useState } from "react";
+import { fetchWeatherData, fetchWeatherDataNow } from '@/services/weather';
+import { Tabs, message, Button, Alert } from 'antd';
+
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
+  const [weather1, setweather] = useState({ city: '' })
+  const [weather2, setweather2] = useState('')
+  const [detail, setDetail] = useState('')
+  const [state, setState] = useState(0)
+  const [condition, setCondition] = useState(true)
+  const [temp, setTemp] = useState(true)
+  const { TabPane } = Tabs;
+  const [messageApi, contextHolder] = message.useMessage();
+
+  useEffect(() => {
+    fetchWeatherDataNow('江门').then(res => {
+      setDetail(JSON.stringify(res))
+      setweather(res.lives[0])
+    })
+
+    fetchWeatherData('江门').then(res => {
+      setweather2(JSON.stringify(res))
+    })
+    if (!localStorage.getItem('cityArray')) {
+      localStorage.setItem('cityArray', [])
+    }
+  }, [])
+
+  const search = (city) => {
+    fetchWeatherDataNow(city).then(res => {
+      if (res.lives[0].length == 0) {
+        messageApi.open({
+          type: 'error',
+          content: '没有找到该城市的天气预测',
+        });
+        return
+      } else {
+        setState(1)
+        setweather(res.lives[0])
+        setDetail(JSON.stringify(res))
+        fetchWeatherData(city).then(res => {
+          setweather2(JSON.stringify(res))
+        })
+      }
+    })
+  }
+
+  const tempChange = () => {
+    setCondition(!condition)
+    setTemp(!temp)
+  }
+
   return (
     <main
-      className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}
+      class="flex items-center justify-center h-screen"
     >
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">pages/index.js</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+      {contextHolder}
+      <div class="flex mx-auto w-3/5  bg-white rounded-lg" style={{ height: 590 }}>
+        <div class='flex  w-1/5 flex-col justify-around'>
+          <Search onSearch={search} />
+          <div class='w-4/5 mx-auto text-center '>
+            <img class='mx-auto' src='/cloud.jpg'></img>
+            {temp ? <div class='text-2xl'>{weather1.temperature}℃</div> : <div class='text-2xl'>{Math.floor((weather1.temperature)*1.8+32)}℉</div>}
+            <div class='mt-2'>{weather1.reporttime}</div>
+          </div>
+          <div class='w-4/5 mx-auto border-t-2 border-t-neutral-300 mb-10'>
+            <div class='flex text-justify mt-5'><img src="/cloud2.png" class='w-6 h-6  mr-2'></img>天气-{weather1.weather}</div>
+            <div class='flex text-justify  mt-5'><img src="/rain.png" class='w-5 h-5 mr-2'></img>湿度-{weather1.humidity}%</div>
+            <div class='mt-10 text-center rounded-lg text-white font-black text-3xl' style={{
+              height: '100px', // 设置盒子的高度  
+              backgroundImage: 'url(/beijing.jpg)', // 设置背景图  
+              backgroundSize: 'cover', // 设置背景图覆盖整个盒子，根据需要调整  
+              backgroundPosition: 'center', // 设置背景图居中显示  
+              alignContent: 'center'
+            }}>{weather1.city}</div>
+          </div>
         </div>
-      </div>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-full sm:before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full sm:after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700/10 after:dark:from-sky-900 after:dark:via-[#0141ff]/40 before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Discover and deploy boilerplate example Next.js&nbsp;projects.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50 text-balance`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
+        <div class='w-4/5 bg-slate-50 rounded-lg'>
+          <div className="pl-2">
+            <div class='float-right relative right-12 top-2 '>
+              {condition ? <Button type="primary z-10" shape="circle" onClick={tempChange}>
+                ℃
+              </Button> : <Button type="primary z-10" shape="circle" onClick={tempChange}>
+                ℉
+              </Button>}
+            </div>
+            <Tabs defaultActiveKey="2" >
+              <TabPane tab="当天" key="1">
+                <WeatherNow weather1={detail} weather2={weather2} />
+              </TabPane>
+              <TabPane tab="预报" key="2" >
+                <WeatherCard weather1={detail} weather2={weather2} state={temp}/>
+              </TabPane>
+            </Tabs>
+          </div>
+        </div>
       </div>
     </main>
   );
