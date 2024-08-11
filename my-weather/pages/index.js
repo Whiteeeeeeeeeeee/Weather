@@ -13,9 +13,10 @@ export default function Home() {
   const [weather1, setweather] = useState({ city: '' })
   const [weather2, setweather2] = useState('')
   const [detail, setDetail] = useState('')
-  const [state, setState] = useState(0)
   const [condition, setCondition] = useState(true)
   const [temp, setTemp] = useState(true)
+  const [weatherDetail, setWeatherDetail] = useState()
+
   const { TabPane } = Tabs;
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -23,6 +24,13 @@ export default function Home() {
     fetchWeatherDataNow('江门').then(res => {
       setDetail(JSON.stringify(res))
       setweather(res.lives[0])
+      if (res.lives[0].weather.indexOf('雨') >= 0) {
+        setWeatherDetail('雨')
+      } else if (res.lives[0].weather.indexOf('晴') >= 0) {
+        setWeatherDetail('晴')
+      } else {
+        setWeatherDetail('阴')
+      }
     })
 
     fetchWeatherData('江门').then(res => {
@@ -34,21 +42,23 @@ export default function Home() {
   }, [])
 
   const search = (city) => {
-    fetchWeatherDataNow(city).then(res => {
-      if (res.lives[0].length == 0) {
-        messageApi.open({
-          type: 'error',
-          content: '没有找到该城市的天气预测',
-        });
-        return
-      } else {
-        setState(1)
-        setweather(res.lives[0])
-        setDetail(JSON.stringify(res))
-        fetchWeatherData(city).then(res => {
-          setweather2(JSON.stringify(res))
-        })
-      }
+    return new Promise((resolve, reject) => {
+      fetchWeatherDataNow(city).then(res => {
+        if (res.lives[0].length == 0) {
+          messageApi.open({
+            type: 'error',
+            content: '没有找到该城市的天气预测',
+          });
+          return
+        } else {
+          setweather(res.lives[0])
+          setDetail(JSON.stringify(res))
+          fetchWeatherData(city).then(res => {
+            setweather2(JSON.stringify(res))
+          })
+          resolve(1)
+        }
+      })
     })
   }
 
@@ -66,8 +76,8 @@ export default function Home() {
         <div class='flex  w-1/5 flex-col justify-around'>
           <Search onSearch={search} />
           <div class='w-4/5 mx-auto text-center '>
-            <img class='mx-auto' src='/cloud.jpg'></img>
-            {temp ? <div class='text-2xl'>{weather1.temperature}℃</div> : <div class='text-2xl'>{Math.floor((weather1.temperature)*1.8+32)}℉</div>}
+            <img class='mx-auto' src={`/${weatherDetail}.jpg`}></img>
+            {temp ? <div class='text-2xl'>{weather1.temperature}℃</div> : <div class='text-2xl'>{Math.floor((weather1.temperature) * 1.8 + 32)}℉</div>}
             <div class='mt-2'>{weather1.reporttime}</div>
           </div>
           <div class='w-4/5 mx-auto border-t-2 border-t-neutral-300 mb-10'>
@@ -96,7 +106,7 @@ export default function Home() {
                 <WeatherNow weather1={detail} weather2={weather2} />
               </TabPane>
               <TabPane tab="预报" key="2" >
-                <WeatherCard weather1={detail} weather2={weather2} state={temp}/>
+                <WeatherCard weather1={detail} weather2={weather2} state={temp} />
               </TabPane>
             </Tabs>
           </div>

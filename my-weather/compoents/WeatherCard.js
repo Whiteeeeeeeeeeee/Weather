@@ -1,6 +1,6 @@
 // components/WeatherCard.js
 import style from '@/styles/WeatherCard.module.css'
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Flex, Progress, Tooltip } from 'antd';
 
 const WeatherCard = ({ weather1, weather2, state }) => {
@@ -26,10 +26,11 @@ const WeatherCard = ({ weather1, weather2, state }) => {
         else if (num == '6') {
             return '六'
         } else {
-            return '七'
+            return '日'
         }
     }
 
+   
     return (
         <div class=''>
             <div class='flex justify-around w-full mx-auto ' >
@@ -37,7 +38,8 @@ const WeatherCard = ({ weather1, weather2, state }) => {
                     detail.map((item, index) => (
                         <div class="bg-white w-1/5 h-50 font-black rounded-lg" key={index}>
                             <div class='text-center'>星期{changStr(item.week)}</div>
-                            <img class='mx-auto' src="/cloud.jpg" style={{ width: 100, height: 100 }}></img>
+                            {item.dayweather.indexOf('雨')>=0 ? <img class='mx-auto' src={`/雨.jpg`} style={{ width: 80, height: 80 }}></img>:item.dayweather.indexOf('云')>=0 || item.dayweather.indexOf('阴')>=0? <img class='mx-auto' src={`/阴.jpg`} style={{ width: 80, height: 80 }}></img>:<img class='mx-auto' src={`/晴.jpg`} style={{ width: 80, height: 80 }}></img>}
+                            <div class='text-center'>{item.dayweather}</div>
                             {state ? <h2 className="text-xl font-bold text-center">{item.nighttemp}~{item.daytemp}℃</h2> : <h2 className="text-xl font-bold text-center">{Math.floor((item.nighttemp) * 1.8 + 32)}~{Math.floor((item.daytemp) * 1.8 + 32)}℉</h2>}
                         </div>
                     ))
