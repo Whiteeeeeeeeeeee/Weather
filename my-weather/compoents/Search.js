@@ -12,15 +12,16 @@ const Search = ({ onSearch }) => {
         setCity(newValue);
     };
 
-    const handleSearch = () => {
+    const handleSearch = async () => {
         if (city) {
-            onSearch(city);
-            let cityArray = localStorage.getItem('cityArray')
-            let citys = cityArray.split(',')
-            let citysAll = [...new Set([...citys, city])]
-            localStorage.setItem('cityArray', citysAll)
-            setDataSource(citysAll)
-
+            let a = await onSearch(city)
+            if (a == 1) {
+                let cityArray = localStorage.getItem('cityArray')
+                let citys = cityArray.split(',')
+                let citysAll = [...new Set([...citys, city])]
+                localStorage.setItem('cityArray', citysAll)
+                setDataSource(citysAll)
+            }
         }
     };
 

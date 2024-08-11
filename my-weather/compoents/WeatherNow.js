@@ -1,12 +1,13 @@
 // components/WeatherCard.js
 import style from '@/styles/WeatherCard.module.css'
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Flex, Progress, Tooltip } from 'antd';
 
-const WeatherCard = ({ weather1, weather2 }) => {
+const WeatherCard = ({ weather1, weather2, state }) => {
     if (!weather2 || !weather1) return null;
     let detail2 = JSON.parse(weather1).lives[0]
     let detail = JSON.parse(weather2).forecasts[0].casts
+
     const changStr = (num) => {
         if (num == '1') {
             return '一'
@@ -25,22 +26,13 @@ const WeatherCard = ({ weather1, weather2 }) => {
         else if (num == '6') {
             return '六'
         } else {
-            return '七'
+            return '日'
         }
     }
+
+   
     return (
         <div class=''>
-            <div class='flex justify-around w-full mx-auto ' >
-                {
-                    detail.map((item, index) => (
-                        <div class="bg-white w-1/5 h-50 font-black rounded-lg" key={index}>
-                            <div class='text-center'>星期{changStr(item.week)}</div>
-                            <img class='mx-auto' src="/cloud.jpg" style={{ width: 100, height: 100 }}></img>
-                            <h2 className="text-xl font-bold text-center">{item.nighttemp}~{item.daytemp}℃</h2>
-                        </div>
-                    ))
-                }
-            </div>
             <h1 class='font-bold text-2xl' style={{ marginLeft: 10, marginTop: 5, marginBottom: 10 }}>今日状况</h1>
             <div class='flex  w-full  h-3/5 justify-around' style={{ flexWrap: 'wrap' }}>
                 <div class={style.box}>
@@ -59,7 +51,7 @@ const WeatherCard = ({ weather1, weather2 }) => {
                 </div>
                 <div class={style.boxMargin}>
                     日出/日落
-                    <div class='flex items-center mt-5'  style={{ color: 'black', fontSize: 20 }}>
+                    <div class='flex items-center mt-5' style={{ color: 'black', fontSize: 20 }}>
                         <img class='w-6 h-6  mr-2' src="/日出.png" ></img>6:35AM
                     </div>
                     <div class='flex items-center' style={{ color: 'black', fontSize: 20 }}>
